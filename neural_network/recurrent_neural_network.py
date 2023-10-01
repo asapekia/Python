@@ -14,9 +14,9 @@ def rnn_cell_forward(xt, a_prev, parameters):
      >>> xt_tmp = np.random.randn(3, 10)
      >>> a_prev_tmp = np.random.randn(5, 10)
      >>> parameters_tmp = {}
-     >>> parameters_tmp['waa'] = np.random.randn(5, 5)
-     >>> parameters_tmp['wax'] = np.random.randn(5, 3)
-     >>> parameters_tmp['wya'] = np.random.randn(2, 5)
+     >>> parameters_tmp['weight_hidden_state'] = np.random.randn(5, 5)
+     >>> parameters_tmp['weight_hidden_state_input'] = np.random.randn(5, 3)
+     >>> parameters_tmp['weight_hidden_state_output'] = np.random.randn(2, 5)
      >>> parameters_tmp['bias'] = np.random.randn(5, 1)
      >>> parameters_tmp['bias_hidden_state_output'] = np.random.randn(2, 1)
      >>> a_next_tmp, yt_pred_tmp, cache_tmp = rnn_cell_forward(\
@@ -29,17 +29,17 @@ def rnn_cell_forward(xt, a_prev, parameters):
     # xt -- your input data at timestep "t"
     # a_prev -- Hidden state at timestep "t-1"
 
-    # wax -- Weight matrix multiplying the input
-    # waa -- Weight matrix multiplying the hidden state
-    # wya -- Weight matrix relating the hidden-state to the output
-    wax = parameters["wax"]
-    waa = parameters["waa"]
-    wya = parameters["wya"]
+    # weight_hidden_state_input -- Weight matrix multiplying the input
+    # weight_hidden_state -- Weight matrix multiplying the hidden state
+    # weight_hidden_state_output -- Weight matrix relating the hidden-state to the output
+    weight_hidden_state_input = parameters["weight_hidden_state_input"]
+    weight_hidden_state = parameters["weight_hidden_state"]
+    weight_hidden_state_output = parameters["weight_hidden_state_output"]
     bias = parameters["bias"]
     bias_hidden_state_output = parameters["bias_hidden_state_output"]
 
-    next_hidden_state = np.tanh(np.dot(waa, a_prev) + np.dot(wax, xt) + bias)
-    yt_pred = np.tanh(np.dot(wya, next_hidden_state) + bias_hidden_state_output)
+    next_hidden_state = np.tanh(np.dot(weight_hidden_state, a_prev) + np.dot(weight_hidden_state_input, xt) + bias)
+    yt_pred = np.tanh(np.dot(weight_hidden_state_output, next_hidden_state) + bias_hidden_state_output)
 
     # Required for backpropagation
     cache = (next_hidden_state, a_prev, xt, parameters)
